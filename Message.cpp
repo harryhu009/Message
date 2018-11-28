@@ -52,91 +52,79 @@ Message::~Message()
 }
 void Message::insert( unsigned int id, std::string fragment)
 {
-    if(head == nullptr)
+    Node *temp_node = nullptr;
+    Node *now_node = head;
+    Node *new_node{new Node(id,fragment)};
+    
+    while(now_node != nullptr &&  now_node->identifier < new_node->identifier )
     {
-        Node *new_node{new Node(id,fragment)};
-        new_node ->p_next=head;
+        temp_node = now_node;
+        now_node = now_node->p_next;
+    }
+    new_node->p_next = now_node;
+    if(temp_node == nullptr)
+    {
         head = new_node;
     }
-        //when head != nullptr
     else
     {
-        Node *new1_node{new Node(id,fragment)};
-        new1_node->p_next=head;
-        head = new1_node;
+        temp_node->p_next = new_node;
     }
 }
-void Message::print_message()
-{
-    //capacity initialized
-    std::size_t capacity = 0;
+void Message::print_message() {
+    Node *temp_node = nullptr;
     Node *print = head;
-    //if head is no input any id or fragment , print out "???"
-    if(head == nullptr)
-    {
+    std::string fragment;
+    std::size_t capacity = 0;
+    if (head == nullptr) {
         std::cout << "???" << std::endl;
     }
-        //else put the identifier of the last node as the capacity for sorting
-    else
-    {
-        capacity = head->identifier;
-    }
-    while(print!=nullptr)
-    {
-        //select the max identifier as the capacity of these node
-        if(capacity < print->identifier)
-        {
-            capacity = print->identifier;
+    //else put the identifier of the last node as the capacity for sorting
+    while (print != nullptr) {
+        for (std::size_t k = 0; k < print->identifier; k++) {
+            std::cout << "..." << std::endl;
         }
-        //list loop
-        print = print->get_next();
-    }
-    //create an pointer array for storing pointers of all nodes in the list
-    Node **create_array = new Node *[capacity+1]{nullptr};
-    print = head;
-    do{
-        //put the original address of each node into the new pointer-array so that we can sort it
-        create_array[print->identifier] = print;
-        print = print->get_next();
-    }while(print == nullptr);
-    for(std::size_t k = 0; k<capacity+1;k++)
-    {
-        if(create_array[k]==nullptr)
-        {
-            std::cout << "..." <<"\t";
+        if (print->p_next == nullptr) {
+            if (print->fragment != "EOT") {
+                std::cout << print->fragment << " " << "???" << std::endl;
+            } else {
+                std::cout << std::endl;
+            }
         }
-        else
-        {
-            do{
-                std::cout <<create_array[k]->get_fragment()<<"\t";
-            }while(create_array[k]->get_fragment()!="EOT");
-        }
-        std::cout << std::endl;
+        std::cout << print->fragment << " ";
+        temp_node = print;
+        capacity = temp_node->identifier + 1;
+        print = print->p_next;
     }
-    delete[] create_array;
+    std::cout<<std::endl;
 }
+#ifndef MARMOSET_TESTING
 int main();
+#endif
+#ifndef MARMOSET_TESTING
 int main() {
     //initialized
     int id;
     std::string fragment;
-    Message *message_cout=new Message();
-    std::cout << "Enter the order : ";
     std::cin >> id;
-     while(id!=2)
-     {
-         if(id==-1)
-         {
-             message_cout->print_message();
-             std::cout<<std::endl;
-         }
-         else if(id>=0)
-         {
-             std::cout << "Enter the " << id <<"'s fragment : ";
-             std::cin >> fragment;
-             message_cout->insert(id,fragment);
-         }
-         std::cin >> id;
-     }
+    
+    Message *message_cout=new Message();
+    
+    while(id != -2)
+    {
+        if(id == -1)
+        {
+            message_cout->print_message();
+        }
+        else if(id >= 0)
+        {
+            std::cin >> fragment;
+            message_cout->insert(id,fragment);
+        }
+        std::cin >> id;
+    }
     return 0;
 }
+#endif
+
+
