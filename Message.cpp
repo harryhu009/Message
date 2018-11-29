@@ -46,6 +46,7 @@ Message::~Message()
         delete new_node;
     }
     delete head;
+    head = nullptr;
 }
 void Message::insert( unsigned int id, std::string fragment)
 {
@@ -66,35 +67,37 @@ void Message::insert( unsigned int id, std::string fragment)
     }
     //equal to (now_node = )nullptr to stop
     new_node->p_next = now_node;
-    if(temp_node == nullptr)
+    if(temp_node != nullptr)
+    {
+        //when temp_node is not nullptr, means that there exits some fragment so that we can put the new one the compare
+        temp_node->p_next = new_node;
+    }
+    else
     {
         //when temp_node is nullptr, means that this is the first fragment that users cin
         //let the head connect the new_node
         head = new_node;
     }
-    else
-    {
-        //when temp_node is not nullptr, means that there exits some fragment so that we can put the new one the compare
-        temp_node->p_next = new_node;
-    }
 }
 void Message::print_message()
 {
     //draw the head so that we can read the all list
-    Node *print_node = head;
-    Node *temp = nullptr;
-    int num = 0;
+    Node *print_node{head};
+    Node *temp{nullptr};
+    int num{0};
+    //when there is not any message in the list
     if(head == nullptr)
     {
         std::cout << "???";
     }
+    
     while(print_node!= nullptr){
         //when print_node != nullptr, means we have something in list
         for(std::size_t k = num; k< print_node->identifier;k++)
         {
             std::cout << "..."<<" ";
         }
-        while(print_node->p_next == nullptr)
+        if(print_node->p_next == nullptr)
         {
             //print_node->p_next == nullptr means the next one is null
             //if user has type the "EOT"
@@ -115,7 +118,6 @@ void Message::print_message()
         //if print_node != nullptr, means the former pointer has something, we shoud narrow the "..." print
         num = temp->identifier + 1;
         print_node = print_node->p_next;
-        
     }
     std::cout<<std::endl;
 }
@@ -127,6 +129,7 @@ int main() {
     //initialized
     int id = -3;
     std::string fragment;
+    //pass in the identifier
     std::cin >> id;
     
     Message *message_cout = new Message();
@@ -144,6 +147,7 @@ int main() {
             std::cin >> fragment;
             message_cout->insert(id,fragment);
         }
+        //continue to pass the identifier
         std::cin >> id;
     }
     //delete the used ptr(heap clear)
