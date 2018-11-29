@@ -15,25 +15,23 @@ Node::Node(unsigned int id, std::string frag)
     //store the string
     fragment = frag;
     //let the p_next is nullptr so that the last one is to nullptr
-    delete [] p_next;
-    p_next = nullptr;
+    Node *p_next = nullptr;
 }
 //return the pointer to point the next node
 Node *Node::get_next()
 {
     //return the address of next node
-    return this->p_next;
+    return p_next;
 }
 //return the string saving in this node
 std::string Node::get_fragment()
 {
     //return string
-    return this->fragment;
+    return fragment;
 }
 //constructor to set the head as a null pointer
 Message::Message()
 {
-    delete[] head;
     head = nullptr;
 }
 //destructor to set the node as a nullptr
@@ -44,11 +42,10 @@ Message::~Message()
         //point the new node to the head
         Node *new_node = head;
         //point the head to the next
-        head = head -> get_next();
-        delete[] new_node;
-        new_node = nullptr;
+        head = head -> p_next;
+        delete new_node;
     }
-    delete[] head;
+    delete head;
 }
 void Message::insert( unsigned int id, std::string fragment)
 {
@@ -60,7 +57,7 @@ void Message::insert( unsigned int id, std::string fragment)
     //new node for saving new number
     Node *new_node{new Node(id,fragment)};
     //when the now_node is not empty, which means that some data in "head", we start to sorting these data
-        //if the new one is bigger than the now one:
+    //if the new one is bigger than the now one:
     while(now_node!=nullptr && new_node->identifier > now_node->identifier)
     {
         temp_node = now_node;
@@ -69,7 +66,6 @@ void Message::insert( unsigned int id, std::string fragment)
     }
     //equal to (now_node = )nullptr to stop
     new_node->p_next = now_node;
-
     if(temp_node == nullptr)
     {
         //when temp_node is nullptr, means that this is the first fragment that users cin
@@ -92,7 +88,7 @@ void Message::print_message()
     {
         std::cout << "???";
     }
-    do{
+    while(print_node!= nullptr){
         //when print_node != nullptr, means we have something in list
         for(std::size_t k = num; k< print_node->identifier;k++)
         {
@@ -119,8 +115,8 @@ void Message::print_message()
         //if print_node != nullptr, means the former pointer has something, we shoud narrow the "..." print
         num = temp->identifier + 1;
         print_node = print_node->p_next;
-
-    }while(print_node == nullptr);
+        
+    }
     std::cout<<std::endl;
 }
 #ifndef MARMOSET_TESTING
@@ -129,10 +125,10 @@ int main();
 #ifndef MARMOSET_TESTING
 int main() {
     //initialized
-    int id;
+    int id = -3;
     std::string fragment;
     std::cin >> id;
-
+    
     Message *message_cout = new Message();
     //when id is not equal to negative two
     while(id != -2)
@@ -150,6 +146,11 @@ int main() {
         }
         std::cin >> id;
     }
+    //delete the used ptr(heap clear)
+    delete message_cout;
     return 0;
 }
 #endif
+
+
+
