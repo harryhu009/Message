@@ -14,7 +14,7 @@ Node::Node(unsigned int id, std::string frag)
     identifier = id;
     //store the string
     fragment = frag;
-    //initialized
+    //let the p_next is nullptr so that the last one is to nullptr
     delete [] p_next;
     p_next = nullptr;
 }
@@ -52,50 +52,75 @@ Message::~Message()
 }
 void Message::insert( unsigned int id, std::string fragment)
 {
-    Node *temp_node = nullptr;
-    Node *now_node = head;
+    //create three pointer so that we can create the list as the order by sorting
+    //temp node for save the previous node and connect the next node
+    Node *temp_node{nullptr};
+    //head node for store and immediate
+    Node *now_node{head};
+    //new node for saving new number
     Node *new_node{new Node(id,fragment)};
-    
-    while(now_node != nullptr &&  now_node->identifier < new_node->identifier )
+    //when the now_node is not empty, which means that some data in "head", we start to sorting these data
+        //if the new one is bigger than the now one:
+    while(now_node!=nullptr && new_node->identifier > now_node->identifier)
     {
         temp_node = now_node;
+        //equal to nullptr
         now_node = now_node->p_next;
     }
+    //equal to (now_node = )nullptr to stop
     new_node->p_next = now_node;
+
     if(temp_node == nullptr)
     {
+        //when temp_node is nullptr, means that this is the first fragment that users cin
+        //let the head connect the new_node
         head = new_node;
     }
     else
     {
+        //when temp_node is not nullptr, means that there exits some fragment so that we can put the new one the compare
         temp_node->p_next = new_node;
     }
 }
-void Message::print_message() {
-    Node *temp_node = nullptr;
-    Node *print = head;
-    std::string fragment;
-    std::size_t capacity = 0;
-    if (head == nullptr) {
-        std::cout << "???" << std::endl;
+void Message::print_message()
+{
+    //draw the head so that we can read the all list
+    Node *print_node = head;
+    Node *temp = nullptr;
+    int num = 0;
+    if(head == nullptr)
+    {
+        std::cout << "???";
     }
-    //else put the identifier of the last node as the capacity for sorting
-    while (print != nullptr) {
-        for (std::size_t k = 0; k < print->identifier; k++) {
-            std::cout << "..." << std::endl;
+    do{
+        //when print_node != nullptr, means we have something in list
+        for(std::size_t k = num; k< print_node->identifier;k++)
+        {
+            std::cout << "..."<<" ";
         }
-        if (print->p_next == nullptr) {
-            if (print->fragment != "EOT") {
-                std::cout << print->fragment << " " << "???" << std::endl;
-            } else {
-                std::cout << std::endl;
+        while(print_node->p_next == nullptr)
+        {
+            //print_node->p_next == nullptr means the next one is null
+            //if user has type the "EOT"
+            if(print_node->fragment == "EOT")
+            {
+                std::cout<<std::endl;
+            }
+            else
+            {
+                //print_node -> fragment != "EOT"
+                std::cout << print_node->fragment<<" "<<"???"<<std::endl;
             }
         }
-        std::cout << print->fragment << " ";
-        temp_node = print;
-        capacity = temp_node->identifier + 1;
-        print = print->p_next;
-    }
+        std::cout<<print_node->fragment<<" ";
+        //list traversal
+        //let temp to store the print_node
+        temp = print_node;
+        //if print_node != nullptr, means the former pointer has something, we shoud narrow the "..." print
+        num = temp->identifier + 1;
+        print_node = print_node->p_next;
+
+    }while(print_node == nullptr);
     std::cout<<std::endl;
 }
 #ifndef MARMOSET_TESTING
@@ -107,15 +132,17 @@ int main() {
     int id;
     std::string fragment;
     std::cin >> id;
-    
-    Message *message_cout=new Message();
-    
+
+    Message *message_cout = new Message();
+    //when id is not equal to negative two
     while(id != -2)
     {
+        //when -1, print out all the former string
         if(id == -1)
         {
             message_cout->print_message();
         }
+        //cin all ids and fragments from user
         else if(id >= 0)
         {
             std::cin >> fragment;
@@ -126,5 +153,3 @@ int main() {
     return 0;
 }
 #endif
-
-
